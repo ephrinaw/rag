@@ -45,3 +45,7 @@ TAVILY_API_KEY=<Your Tavily API Key>
 ```bash
 python src/main.py
 ```
+
+## Links
+demo 
+https://fgtijp5ws8q3ugevqyzcby.streamlit.app/

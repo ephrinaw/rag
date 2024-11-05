@@ -23,7 +23,7 @@ def main(question, user_documents=None):
 if __name__ == "__main__":
     # Prepare predefined documents
     urls = {
-        "doc1.txt": "https://example.com/doc1.txt",
+        "doc1.txt": "https://www.hamk.fi/en/student-pages/services-for-students/student-wellbeing/",
         "doc2.txt": "https://example.com/doc2.txt"
     }
     prepare_documents(urls, Config.DOCUMENT_DIRECTORY)

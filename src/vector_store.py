@@ -1,23 +1,28 @@
-import faiss
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
-from langchain.docstore.document import Document
-import os
-
-embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
+from sentence_transformers import SentenceTransformer, util
 
 class VectorStoreManager:
-    def __init__(self, index_file_path="faiss_index"):
-        self.index_file_path = index_file_path
-        if os.path.exists(index_file_path):
-            self.vector_store = FAISS.load_local(index_file_path, embeddings)
-        else:
-            self.vector_store = FAISS(embeddings)
+    def __init__(self):
+        # Initialize the sentence-transformers model
+        self.model = SentenceTransformer('all-MiniLM-L6-v2')
+        self.document_embeddings = []
+        self.documents = []
 
     def add_documents(self, documents):
-        doc_objs = [Document(content=doc) for doc in documents]
-        self.vector_store.add_documents(doc_objs)
-        self.vector_store.save_local(self.index_file_path)
+        """
+        Adds documents to the vector store by encoding them with SentenceTransformers.
+        """
+        self.documents.extend(documents)
+        doc_embeddings = self.model.encode(documents, convert_to_tensor=True)
+        self.document_embeddings.extend(doc_embeddings)
 
     def search(self, query, top_k=3):
-        return self.vector_store.similarity_search(query, k=top_k)
+        """
+        Searches for the most relevant documents in the vector store based on the query.
+        """
+        query_embedding = self.model.encode(query, convert_to_tensor=True)
+        similarities = util.pytorch_cos_sim(query_embedding, self.document_embeddings)
+        
+        # Sort and retrieve the most similar documents
+        top_results = similarities.topk(top_k)
+        top_docs = [self.documents[i] for i in top_results.indices]
+        return top_docs

@@ -1,5 +1,5 @@
 from langgraph.graph import StateGraph
-from langgraph.graph.utils import visualize_graph
+from langgraph.graph import visualize_graph
 from workflow.chatbot_workflow import chatbot_workflow
 
 def visualize_workflow():
